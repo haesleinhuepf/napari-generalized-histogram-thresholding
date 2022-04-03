@@ -1,0 +1,21 @@
+name: napari-generalized-histogram-thresholding
+display_name: napari-generalized-histogram-thresholding
+contributions:
+  commands: 
+    - id: napari-generalized-histogram-thresholding.make_qwidget
+      python_name: napari_generalized_histogram_thresholding._widget:ExampleQWidget
+      title: Make example QWidget
+    - id: napari-generalized-histogram-thresholding.make_magic_widget
+      python_name: napari_generalized_histogram_thresholding._widget:example_magic_widget
+      title: Make example magic widget
+    - id: napari-generalized-histogram-thresholding.make_func_widget
+      python_name: napari_generalized_histogram_thresholding._widget:example_function_widget
+      title: Make example function widget   
+  widgets:
+    - command: napari-generalized-histogram-thresholding.make_qwidget
+      display_name: Example QWidget
+    - command: napari-generalized-histogram-thresholding.make_magic_widget
+      display_name: Example Magic Widget
+    - command: napari-generalized-histogram-thresholding.make_func_widget
+      autogenerate: true
+      display_name: Example Function Widget 
