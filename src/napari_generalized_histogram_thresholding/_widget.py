@@ -6,36 +6,24 @@ see: https://napari.org/plugins/stable/guides.html#widgets
 
 Replace code below according to your needs.
 """
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
-from magicgui import magic_factory
 
 
-class ExampleQWidget(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
-    def __init__(self, napari_viewer):
-        super().__init__()
-        self.viewer = napari_viewer
+def generalized_histogram_threshold(image: "napari.types.ImageData", nu=0, tau=0, kappa=0, omega=0.5) -> "napari.types.LabelsData":
+    """
 
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
+    Otsu: nu=128 (large number), tau=0.01
+    Min-Error: nu=0, kappa=0, tau and omega irellevant
 
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(btn)
+    See also
+    --------
+    https://arxiv.org/pdf/2007.07350.pdf
+    """
+    import numpy as np
+    from ._ght import GHT
 
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
+    hist, hist_edges = np.histogram(image, bins=255)
+    hist_center = (hist_edges[:-1] + hist_edges[1:]) / 2
 
-
-@magic_factory
-def example_magic_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
-
-
-# Uses the `autogenerate: true` flag in the plugin manifest
-# to indicate it should be wrapped as a magicgui to autogenerate
-# a widget.
-def example_function_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+    threshold, counts = GHT(hist, hist_center, nu, tau, kappa, omega)
+    print("Threshold", threshold)
+    return image > threshold
